@@ -3,7 +3,7 @@ import numpy as np
 import SimpleITK as sitk
 import scipy.io as sio
 
-nii_dir = "/mnt/d/download/RawData/RawData/Training/img"
+nii_dir = "/data/Aaron/BTCV-rawdata/RawData/RawData/Training/img"
 out_dir = "./fft_attack_output"
 
 os.makedirs(out_dir + "/low_freq", exist_ok=True)
