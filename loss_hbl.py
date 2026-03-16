@@ -4,7 +4,7 @@ import SimpleITK as sitk
 import scipy.io as sio
 
 nii_dir = "/data/Aaron/BTCV-rawdata/RawData/RawData/Training/img"
-out_dir = "./output"
+out_dir = "/output"
 
 os.makedirs(out_dir + "/low_freq", exist_ok=True)
 os.makedirs(out_dir + "/mid_freq", exist_ok=True)
