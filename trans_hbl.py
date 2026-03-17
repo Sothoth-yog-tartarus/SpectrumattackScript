@@ -12,9 +12,19 @@ high_dir = "/data/Aaron/BTCVrawdata_remove/high_freq"
 save_dir = "/output/compare_vis"
 os.makedirs(save_dir, exist_ok=True)
 
-def btcv_norm(x):
-    x = np.clip(x, -1000, 1000)
-    x = (x + 1000) / 2000
+
+def windowing(x, wl=50, ww=400):
+    low = wl - ww // 2
+    high = wl + ww // 2
+    x = np.clip(x, low, high)
+    x = (x - low) / (high - low)
+    return x
+
+
+def norm(x):
+    p1, p99 = np.percentile(x, (1, 99))
+    x = np.clip(x, p1, p99)
+    x = (x - p1) / (p99 - p1 + 1e-8)
     return x
 
 
@@ -48,6 +58,7 @@ for fname in files:
     print("Mid range:", mid.min(), mid.max())
     print("High range:", high.min(), high.max())
 
+
     # low = np.transpose(low, (2, 0, 1))
     # mid = np.transpose(mid, (2, 0, 1))
     # high = np.transpose(high, (2, 0, 1))
@@ -62,22 +73,22 @@ for fname in files:
     plt.figure(figsize=(10, 8))
 
     plt.subplot(2, 2, 1)
-    plt.imshow(btcv_norm(img_slice), cmap='gray')
-    plt.title("Original (HU→[0,1])")
+    plt.imshow(windowing(img_slice), cmap='gray')
+    plt.title("Original (windowing)")
     plt.axis('off')
 
     plt.subplot(2, 2, 2)
-    plt.imshow(low_slice, cmap='gray')
+    plt.imshow(norm(low_slice), cmap='gray')
     plt.title("Low")
     plt.axis('off')
 
     plt.subplot(2, 2, 3)
-    plt.imshow(mid_slice, cmap='gray')
+    plt.imshow(norm(mid_slice), cmap='gray')
     plt.title("Mid")
     plt.axis('off')
 
     plt.subplot(2, 2, 4)
-    plt.imshow(high_slice, cmap='gray')
+    plt.imshow(norm(high_slice), cmap='gray')
     plt.title("High")
     plt.axis('off')
 
