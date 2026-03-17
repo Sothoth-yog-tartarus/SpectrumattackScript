@@ -12,10 +12,11 @@ high_dir = "/data/Aaron/BTCVrawdata_remove/high_freq"
 save_dir = "/output/compare_vis"
 os.makedirs(save_dir, exist_ok=True)
 
-def norm(x):
-    x = x - x.min()
-    x = x / (x.max() + 1e-8)
+def btcv_norm(x):
+    x = np.clip(x, -1000, 1000)
+    x = (x + 1000) / 2000
     return x
+
 
 files = sorted([f for f in os.listdir(img_dir) if f.endswith(".nii.gz")])
 print("Total cases:", len(files))
@@ -24,7 +25,6 @@ print("Total cases:", len(files))
 for fname in files:
 
     case = fname.replace(".nii.gz", "")
-
     print("Processing:", case)
 
     img_path = os.path.join(img_dir, fname)
@@ -43,6 +43,15 @@ for fname in files:
     mid = sio.loadmat(mid_path)["volume"]
     high = sio.loadmat(high_path)["volume"]
 
+    print("Original range:", volume.min(), volume.max())
+    print("Low range:", low.min(), low.max())
+    print("Mid range:", mid.min(), mid.max())
+    print("High range:", high.min(), high.max())
+
+    # low = np.transpose(low, (2, 0, 1))
+    # mid = np.transpose(mid, (2, 0, 1))
+    # high = np.transpose(high, (2, 0, 1))
+
     z = volume.shape[0] // 2
 
     img_slice = volume[z]
@@ -52,23 +61,23 @@ for fname in files:
 
     plt.figure(figsize=(10, 8))
 
-    plt.subplot(2,2,1)
-    plt.imshow(norm(img_slice), cmap='gray')
-    plt.title("Original")
+    plt.subplot(2, 2, 1)
+    plt.imshow(btcv_norm(img_slice), cmap='gray')
+    plt.title("Original (HU→[0,1])")
     plt.axis('off')
 
-    plt.subplot(2,2,2)
-    plt.imshow(norm(low_slice), cmap='gray')
+    plt.subplot(2, 2, 2)
+    plt.imshow(low_slice, cmap='gray')
     plt.title("Low")
     plt.axis('off')
 
-    plt.subplot(2,2,3)
-    plt.imshow(norm(mid_slice), cmap='gray')
+    plt.subplot(2, 2, 3)
+    plt.imshow(mid_slice, cmap='gray')
     plt.title("Mid")
     plt.axis('off')
 
-    plt.subplot(2,2,4)
-    plt.imshow(norm(high_slice), cmap='gray')
+    plt.subplot(2, 2, 4)
+    plt.imshow(high_slice, cmap='gray')
     plt.title("High")
     plt.axis('off')
 
