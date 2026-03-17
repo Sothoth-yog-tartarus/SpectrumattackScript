@@ -4,7 +4,7 @@ import SimpleITK as sitk
 import scipy.io as sio
 import matplotlib.pyplot as plt
 
-img_dir = "/data/Aaron/BTCV-rawdata/RawData/RawData/Training"
+img_dir = "/data/Aaron/BTCV-rawdata/RawData/RawData/Training/img"
 low_dir = "/data/Aaron/BTCV-RawData_freq/low_freq"
 mid_dir = "/data/Aaron/BTCV-RawData_freq/mid_freq"
 high_dir = "/data/Aaron/BTCV-RawData_freq/high_freq"
