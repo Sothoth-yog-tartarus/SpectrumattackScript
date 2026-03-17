@@ -15,37 +15,38 @@ files = sorted(os.listdir(nii_dir))
 
 def fft_attack(volume):
 
-    D,H,W = volume.shape
+    D, H, W = volume.shape
 
     F = np.fft.fftn(volume)
     F = np.fft.fftshift(F)
 
     center = np.array([D//2, H//2, W//2])
 
-    r_low = int(min(D,H,W) * 0.1)
-    r_mid = int(min(D,H,W) * 0.25)
+    r_low = int(min(D, H, W) * 0.1)
+    r_mid = int(min(D, H, W) * 0.25)
 
-    Z,Y,X = np.ogrid[:D,:H,:W]
+    Z, Y, X = np.ogrid[:D, :H, :W]
 
     dist = np.sqrt(
-        (Z-center[0])**2 +
-        (Y-center[1])**2 +
-        (X-center[2])**2
+        (Z - center[0])**2 +
+        (Y - center[1])**2 +
+        (X - center[2])**2
     )
 
+    # 原mask（频段划分）
     mask_low = dist < r_low
-
     mask_mid = (dist >= r_low) & (dist < r_mid)
-
     mask_high = dist >= r_mid
 
-    F_low = F * mask_low
-    F_mid = F * mask_mid
-    F_high = F * mask_high
+    # ⭐⭐⭐ 攻击版本：取反（删除该频段）
+    F_attack_low  = F * (~mask_low)   # 去掉低频
+    F_attack_mid  = F * (~mask_mid)   # 去掉中频
+    F_attack_high = F * (~mask_high)  # 去掉高频
 
-    low_img = np.fft.ifftn(np.fft.ifftshift(F_low)).real
-    mid_img = np.fft.ifftn(np.fft.ifftshift(F_mid)).real
-    high_img = np.fft.ifftn(np.fft.ifftshift(F_high)).real
+    # 逆变换
+    low_img = np.fft.ifftn(np.fft.ifftshift(F_attack_low)).real
+    mid_img = np.fft.ifftn(np.fft.ifftshift(F_attack_mid)).real
+    high_img = np.fft.ifftn(np.fft.ifftshift(F_attack_high)).real
 
     return low_img, mid_img, high_img
 
@@ -55,31 +56,30 @@ for fname in files:
     if not fname.endswith(".nii.gz"):
         continue
 
-    case = fname.replace(".nii.gz","")
+    case = fname.replace(".nii.gz", "")
 
-    nii_path = os.path.join(nii_dir,fname)
+    nii_path = os.path.join(nii_dir, fname)
 
     img = sitk.ReadImage(nii_path)
-
     volume = sitk.GetArrayFromImage(img).astype(np.float32)
 
     low_ct, mid_ct, high_ct = fft_attack(volume)
 
     sio.savemat(
-        os.path.join(out_dir,"low_freq",case+".mat"),
-        {"volume":low_ct}
+        os.path.join(out_dir, "low_freq", case + ".mat"),
+        {"volume": low_ct}
     )
 
     sio.savemat(
-        os.path.join(out_dir,"mid_freq",case+".mat"),
-        {"volume":mid_ct}
+        os.path.join(out_dir, "mid_freq", case + ".mat"),
+        {"volume": mid_ct}
     )
 
     sio.savemat(
-        os.path.join(out_dir,"high_freq",case+".mat"),
-        {"volume":high_ct}
+        os.path.join(out_dir, "high_freq", case + ".mat"),
+        {"volume": high_ct}
     )
 
-    print("processed:",case)
+    print("processed:", case)
 
 print("DONE")
