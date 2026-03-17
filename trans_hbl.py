@@ -5,9 +5,9 @@ import scipy.io as sio
 import matplotlib.pyplot as plt
 
 img_dir = "/data/Aaron/BTCV-rawdata/RawData/RawData/Training/img"
-low_dir = "/data/Aaron/BTCV-RawData_freq/low_freq"
-mid_dir = "/data/Aaron/BTCV-RawData_freq/mid_freq"
-high_dir = "/data/Aaron/BTCV-RawData_freq/high_freq"
+low_dir = "/data/Aaron/BTCVrawdata_remove/low_freq"
+mid_dir = "/data/Aaron/BTCVrawdata_remove/mid_freq"
+high_dir = "/data/Aaron/BTCVrawdata_remove/high_freq"
 
 save_dir = "/output/compare_vis"
 os.makedirs(save_dir, exist_ok=True)
