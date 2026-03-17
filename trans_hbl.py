@@ -4,10 +4,10 @@ import SimpleITK as sitk
 import scipy.io as sio
 import matplotlib.pyplot as plt
 
-img_dir = "/data/RawData/Training/img"
-low_dir = "/output/low_freq"
-mid_dir = "/output/mid_freq"
-high_dir = "/output/high_freq"
+img_dir = "/data/Aaron/BTCV-rawdata/RawData/RawData/Training"
+low_dir = "/data/Aaron/BTCV-RawData_freq/low_freq"
+mid_dir = "/data/Aaron/BTCV-RawData_freq/mid_freq"
+high_dir = "/data/Aaron/BTCV-RawData_freq/high_freq"
 
 save_dir = "/output/compare_vis"
 os.makedirs(save_dir, exist_ok=True)
