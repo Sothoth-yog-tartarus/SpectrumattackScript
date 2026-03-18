@@ -58,7 +58,7 @@ for fname in files:
 
     # 原图：直接显示 [0,1]
     plt.subplot(2, 2, 1)
-    plt.imshow(img_slice, cmap='gray', vmin=0, vmax=1)
+    plt.imshow(img_slice, cmap='gray', vmin=0.02, vmax=0.98)
     plt.title("Original")
     plt.axis('off')
 
