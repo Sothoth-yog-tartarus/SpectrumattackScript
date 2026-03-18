@@ -69,7 +69,7 @@ for fname in files:
     plt.axis('off')
 
     plt.subplot(2, 2, 3)
-    plt.imshow((norm(mid_slice), cmap='gray')
+    plt.imshow(norm(mid_slice), cmap='gray')
     plt.title("Mid")
     plt.axis('off')
 
