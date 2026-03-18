@@ -54,27 +54,45 @@ for fname in files:
     mid_slice = mid[z]
     high_slice = high[z]
 
+    # ---------------------------
+    # 处理函数
+    # ---------------------------
+    # 原图可视化：百分位裁剪 + gamma
+    p2, p98 = np.percentile(img_slice, (2, 98))
+    img_vis = np.clip((img_slice - p2) / (p98 - p2 + 1e-8), 0, 1)
+    img_vis = np.power(img_vis, 0.8)  # gamma 0.8，略暗，增强对比度但不过白
+
+    # low/mid/high 可视化：均值/标准差对齐原图
+    def match_vis(component, ref):
+        comp_vis = (component - component.mean()) / (component.std() + 1e-8) * ref.std() + ref.mean()
+        return np.clip(comp_vis, 0, 1)
+
+    low_vis  = match_vis(low_slice, img_slice)
+    mid_vis  = match_vis(mid_slice, img_slice)
+    high_vis = match_vis(high_slice, img_slice)
+
+    # ---------------------------
+    # 绘图
+    # ---------------------------
     plt.figure(figsize=(10, 8))
 
-    # 原图：直接显示 [0,1]
     plt.subplot(2, 2, 1)
-    p2, p98 = np.percentile(img_slice, (2, 98))
-    plt.imshow(img_slice, cmap='gray', vmin=p2, vmax=p98)
+    plt.imshow(img_vis, cmap='gray')
     plt.title("Original")
     plt.axis('off')
 
     plt.subplot(2, 2, 2)
-    plt.imshow(norm(low_slice), cmap='gray')
+    plt.imshow(low_vis, cmap='gray')
     plt.title("Low")
     plt.axis('off')
 
     plt.subplot(2, 2, 3)
-    plt.imshow(norm(mid_slice), cmap='gray')
+    plt.imshow(mid_vis, cmap='gray')
     plt.title("Mid")
     plt.axis('off')
 
     plt.subplot(2, 2, 4)
-    plt.imshow(norm(high_slice), cmap='gray')
+    plt.imshow(high_vis, cmap='gray')
     plt.title("High")
     plt.axis('off')
 
