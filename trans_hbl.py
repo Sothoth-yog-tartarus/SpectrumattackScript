@@ -58,12 +58,13 @@ for fname in files:
 
     # 原图：直接显示 [0,1]
     plt.subplot(2, 2, 1)
-    plt.imshow(img_slice, cmap='gray', vmin=0, vmax=1)
+    p5, p95 = np.percentile(img_slice, (5, 95))
+    plt.imshow(img_slice, cmap='gray', vmin=p5, vmax=p95)
     plt.title("Original")
     plt.axis('off')
 
     plt.subplot(2, 2, 2)
-    plt.imshow(norm(low_slice), cmap='gray')
+    plt.imshow(mid_slice), cmap='gray')
     plt.title("Low")
     plt.axis('off')
 
