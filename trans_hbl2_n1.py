@@ -23,13 +23,10 @@ def windowing(x, wl=50, ww=400):
     return x
 
 # -----------------------------
-# 百分位归一化
+# 可视化统一处理：软组织窗 + gamma
 # -----------------------------
-def norm(x):
-    p1, p99 = np.percentile(x, (1, 99))
-    x = np.clip(x, p1, p99)
-    x = (x - p1) / (p99 - p1 + 1e-8)
-    return x
+def vis_soft_tissue(slice, gamma=0.8):
+    return np.power(windowing(slice), gamma)
 
 files = sorted([f for f in os.listdir(img_dir) if f.endswith(".nii.gz")])
 print("Total cases:", len(files))
@@ -55,41 +52,34 @@ for fname in files:
     mid = sio.loadmat(mid_path)["volume"]
     high = sio.loadmat(high_path)["volume"]
 
-    print("Original range:", volume.min(), volume.max())
-
     z = volume.shape[0] // 2
 
-    img_slice = volume[z]
-    low_slice = low[z]
-    mid_slice = mid[z]
+    img_slice  = volume[z]
+    low_slice  = low[z]
+    mid_slice  = mid[z]
     high_slice = high[z]
 
     plt.figure(figsize=(10, 8))
 
-    # -----------------------------
-    # 原图：软组织窗 + gamma
-    # -----------------------------
-    img_vis = np.power(windowing(img_slice), 0.8)
+    # 原图
     plt.subplot(2, 2, 1)
-    plt.imshow(img_vis, cmap='gray')
+    plt.imshow(vis_soft_tissue(img_slice), cmap='gray')
     plt.title("Original")
     plt.axis('off')
 
-    # -----------------------------
-    # low/mid/high：各自百分位归一化
-    # -----------------------------
+    # low/mid/high 也用软组织窗 + gamma
     plt.subplot(2, 2, 2)
-    plt.imshow(norm(low_slice), cmap='gray')
+    plt.imshow(vis_soft_tissue(low_slice), cmap='gray')
     plt.title("Low")
     plt.axis('off')
 
     plt.subplot(2, 2, 3)
-    plt.imshow(norm(mid_slice), cmap='gray')
+    plt.imshow(vis_soft_tissue(mid_slice), cmap='gray')
     plt.title("Mid")
     plt.axis('off')
 
     plt.subplot(2, 2, 4)
-    plt.imshow(norm(high_slice), cmap='gray')
+    plt.imshow(vis_soft_tissue(high_slice), cmap='gray')
     plt.title("High")
     plt.axis('off')
 
