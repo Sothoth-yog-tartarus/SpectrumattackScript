@@ -56,10 +56,10 @@ for fname in files:
 
     plt.figure(figsize=(10, 8))
 
-    # 原图：直接显示 [0,1]
-    plt.subplot(2, 2, 1)
-    plt.imshow(img_slice, cmap='gray', vmin=0.02, vmax=0.98)
-    plt.title("Original")
+    plt.subplot(2, 2, 1) 
+    img_vis = np.power(windowing(img_slice), 0.8)
+    plt.imshow(img_vis, cmap='gray')
+    plt.title("Original (windowing)") 
     plt.axis('off')
 
     plt.subplot(2, 2, 2)
