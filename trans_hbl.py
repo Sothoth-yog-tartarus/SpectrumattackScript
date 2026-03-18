@@ -13,14 +13,6 @@ save_dir = "/output/compare_vis"
 os.makedirs(save_dir, exist_ok=True)
 
 
-def windowing(x, wl=50, ww=400):
-    low = wl - ww // 2
-    high = wl + ww // 2
-    x = np.clip(x, low, high)
-    x = (x - low) / (high - low)
-    return x
-
-
 def norm(x):
     p1, p99 = np.percentile(x, (1, 99))
     x = np.clip(x, p1, p99)
@@ -54,14 +46,6 @@ for fname in files:
     high = sio.loadmat(high_path)["volume"]
 
     print("Original range:", volume.min(), volume.max())
-    print("Low range:", low.min(), low.max())
-    print("Mid range:", mid.min(), mid.max())
-    print("High range:", high.min(), high.max())
-
-
-    # low = np.transpose(low, (2, 0, 1))
-    # mid = np.transpose(mid, (2, 0, 1))
-    # high = np.transpose(high, (2, 0, 1))
 
     z = volume.shape[0] // 2
 
@@ -72,9 +56,10 @@ for fname in files:
 
     plt.figure(figsize=(10, 8))
 
+    # 原图：直接显示 [0,1]
     plt.subplot(2, 2, 1)
-    plt.imshow(windowing(img_slice), cmap='gray')
-    plt.title("Original (windowing)")
+    plt.imshow(img_slice, cmap='gray', vmin=0, vmax=1)
+    plt.title("Original")
     plt.axis('off')
 
     plt.subplot(2, 2, 2)
